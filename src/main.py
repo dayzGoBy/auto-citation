@@ -1,25 +1,11 @@
 import os
-from string import ascii_letters, digits
-from random import choice
-from warnings import simplefilter
-
 import telebot
-import openai
+import uuid
 from loguru import logger
-from dotenv import load_dotenv
 
-from bot.messages import messages
-from ai.emotions import get_person_description, structurize_for_gpt
-from ai.gpt import request_promt, GPT_PROMT
-
-
-simplefilter("ignore")
-
-load_dotenv("environments/app.env")
+from messages import messages
 
 bot = telebot.TeleBot(os.environ["BOT_TOKEN"])
-openai.api_key = os.environ["OPENAI_TOKEN"]
-
 
 @bot.message_handler(commands=["start"])
 def start_command(message):
@@ -31,12 +17,14 @@ def help_command(message):
     bot.send_message(message.chat.id, messages["help"])
 
 
+FEATURE_ORDER = ["angry", "disgust", "fear", "happy", "sad", "surprise", "neutral"]
+
 @bot.message_handler(content_types=['photo'])
 def photo(message):
     file_info = bot.get_file(message.photo[-1].file_id)
     downloaded_file = bot.download_file(file_info.file_path)
 
-    filename = "".join([choice(ascii_letters + digits) for _ in range(16)])
+    filename = str(uuid.uuid4())
 
     with open(f"photos/{filename}.jpg", 'wb') as new_file:
         new_file.write(downloaded_file)
@@ -44,13 +32,12 @@ def photo(message):
     reply_message = bot.reply_to(message, messages["got_photo"])
 
     try:
-        demographies = get_person_description(f"photos/{filename}.jpg")
-
+        pass
+        # demographies = get_person_description(f"photos/{filename}.jpg")
     except ValueError:
         bot.send_message(message.chat.id, messages["no_face"])
-
     else:
-        emotions = list(map(
+        """emotions = list(map(
             lambda key: round(demographies["emotion"][key], 2),
             ["angry", "disgust", "fear", "happy", "sad", "surprise", "neutral"]
         ))
@@ -63,7 +50,7 @@ def photo(message):
         gpt_answer = request_promt(GPT_PROMT, user_message)
 
         bot.edit_message_text(messages["gpt_answer"].format(gpt_answer),
-                              message.chat.id, reply_message.message_id)
+                              message.chat.id, reply_message.message_id)"""
 
 
 if __name__ == "__main__":
