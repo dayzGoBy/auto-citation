@@ -1,11 +1,18 @@
 services:
-  app:
+  bot:
     container_name: the-bot
     env_file:
       - ./.env
     build: .
     command: python3 ./src/main.py
     ports:
-      - 6333:80
+      - 8088:8088
     volumes:
       - .:/bot
+  qdrant:
+    image: qdrant/qdrant
+    ports:
+      - 6333:6333
+      - 6334:6334
+    volumes:
+      - ./qdrant:/qdrant/storage:z
