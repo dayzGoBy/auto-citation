@@ -21,6 +21,8 @@ FEATURE_ORDER = ["angry", "disgust", "fear", "happy", "sad", "surprise", "neutra
 
 @bot.message_handler(content_types=['photo'])
 def photo(message):
+    logger.info("Got photo")
+
     file_info = bot.get_file(message.photo[-1].file_id)
     downloaded_file = bot.download_file(file_info.file_path)
 
@@ -40,7 +42,7 @@ def photo(message):
         bot.send_message(message.chat.id, messages['model_answer'])
         
         for entry in results:
-            bot.send_message(message.chat.id, f"{entry['text']}\n{entry['author']}, «{entry['piece']}»")
+            bot.send_message(message.chat.id, f"{entry['text']}\n\n - {entry['author']}, «{entry['piece']}»")
 
 
 if __name__ == "__main__":
