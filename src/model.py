@@ -44,4 +44,6 @@ def do_query(vector):
         limit=3,
     )
     return [q.payload for q in query]
-    
+
+def add_quote(quote, author, piece):
+    pass
