@@ -1,2 +1,4 @@
 loguru==0.7.0
 pyTelegramBotAPI==4.7.1
+qdrant-client==1.6.9
+deepface==0.0.79

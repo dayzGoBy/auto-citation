@@ -2,8 +2,8 @@ import os
 import telebot
 import uuid
 from loguru import logger
-
 from messages import messages
+from model import do_query, classify_face
 
 bot = telebot.TeleBot(os.environ["BOT_TOKEN"])
 
@@ -29,28 +29,18 @@ def photo(message):
     with open(f"photos/{filename}.jpg", 'wb') as new_file:
         new_file.write(downloaded_file)
 
-    reply_message = bot.reply_to(message, messages["got_photo"])
+    bot.reply_to(message, messages["got_photo"])
 
     try:
-        pass
-        # demographies = get_person_description(f"photos/{filename}.jpg")
+        vector = classify_face(f"photos/{filename}.jpg")
     except ValueError:
         bot.send_message(message.chat.id, messages["no_face"])
     else:
-        """emotions = list(map(
-            lambda key: round(demographies["emotion"][key], 2),
-            ["angry", "disgust", "fear", "happy", "sad", "surprise", "neutral"]
-        ))
-
-        reply_message = bot.edit_message_text(
-            messages["extracted_emotions"].format(*emotions),
-            message.chat.id, reply_message.message_id)
-
-        user_message = structurize_for_gpt(demographies)
-        gpt_answer = request_promt(GPT_PROMT, user_message)
-
-        bot.edit_message_text(messages["gpt_answer"].format(gpt_answer),
-                              message.chat.id, reply_message.message_id)"""
+        results = do_query(vector)
+        bot.send_message(message.chat.id, messages['model_answer'])
+        
+        for entry in results:
+            bot.send_message(message.chat.id, f"{entry['text']}\n{entry['author']}, «{entry['piece']}»")
 
 
 if __name__ == "__main__":
