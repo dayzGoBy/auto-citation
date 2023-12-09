@@ -1,8 +1,9 @@
 import os
 import telebot
+from telebot import types
 import uuid
 from loguru import logger
-from messages import messages
+from messages import messages, emoji
 from model import do_query, classify_face
 from pathlib import Path
 import json
@@ -45,8 +46,21 @@ def photo(message):
         results = do_query(vector)
         bot.send_message(message.chat.id, messages['model_answer'])
 
+        markup = types.InlineKeyboardMarkup(row_width=5)
+        markup.add(*[types.InlineKeyboardButton(e, callback_data=str(i)) for i, e in enumerate(emoji)])
+
         for entry in results:
-            bot.send_message(message.chat.id, f"{entry['text']}\n\n - {entry['author']}, «{entry['piece']}»")
+            bot.send_message(
+                message.chat.id,
+                f"{entry['text']}\n\n - {entry['author']}, «{entry['piece']}»",
+                reply_markup=markup
+            )
+
+
+@bot.callback_query_handler(func=lambda call: True)
+def callback_query(call):
+    # process answer
+    bot.answer_callback_query(call.id, "Ваша оценка сохранена")
 
 
 json_file_path = "./user_quotes.json"
@@ -86,7 +100,7 @@ def get_user_quotes(user_id):
 
 
 def set_user_quotes(user_quotes, user_id):
-    with open(json_file_path, "r") as file:
+    with open(json_file_path, "rwx") as file:
         all_quotes = json.load(file)
     all_quotes[str(user_id)] = user_quotes
     with open(json_file_path, "w") as file:
@@ -109,7 +123,7 @@ def save_work(message, quote_text, author_text):
     user_id = message.from_user.id
     work_text = message.text
     save_quote(user_id, quote_text, author_text, work_text)
-    bot.send_message(user_id, "Quote added successfully!")
+    bot.send_message(user_id, "Цитата успешно добавлена")
 
 
 @bot.message_handler(commands=['view'])
@@ -119,9 +133,9 @@ def view_quotes(message):
     if "quotes" in user_quotes and user_quotes["quotes"]:
         quotes_text = "\n\n".join(
             [f"\"{quote['quote']}\" - {quote['author']}, {quote['work']}" for quote in user_quotes["quotes"]])
-        bot.send_message(user_id, f"Your quotes:\n{quotes_text}")
+        bot.send_message(user_id, f"Ваши цитаты:\n{quotes_text}")
     else:
-        bot.send_message(user_id, "You haven't added any quotes yet.")
+        bot.send_message(user_id, "Вы ещё не добавили никаких цитат.")
 
 
 if __name__ == "__main__":
