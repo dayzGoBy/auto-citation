@@ -1,5 +1,8 @@
 from sentence_transformers import SentenceTransformer, util
-import os, replicate, random, uuid
+import os
+import replicate
+import random
+import uuid
 from qdrant_client import QdrantClient, models
 
 model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
@@ -8,6 +11,7 @@ remote = QdrantClient(
     url="https://d4fbb97b-85ae-47ba-af87-d9a97711caff.us-east4-0.gcp.cloud.qdrant.io:6333",
     api_key=os.environ['QDRANT_API_TOKEN'],
 )
+
 
 def describe(path):
     return "".join(replapi.run(
@@ -21,8 +25,10 @@ def describe(path):
         }
     ))
 
+
 def classify_face(path):
-    return model.encode(describe(path))   
+    return model.encode(describe(path))
+
 
 def do_query(vector):
     query = remote.search(
@@ -32,6 +38,7 @@ def do_query(vector):
     )
 
     return random.sample([q.payload for q in query], 3)
+
 
 def add_quote(quote: str, author: str, piece: str):
     remote.upload_records(
