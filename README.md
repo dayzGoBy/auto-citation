@@ -6,12 +6,12 @@
 ## Использованные ресурсы:
 [qdrant](https://github.com/qdrant/qdrant-client) - база данных для семантического поиска
 
-[deepface](https://github.com/serengil/deepface) - модель для распознавания эмоций на фотографии
+[yorickvp/llava-13b](https://replicate.com/yorickvp/llava-13b/versions) - модель для описания фотографий
 
-[seara/rubert-base-cased-ru-go-emotions](https://huggingface.co/seara/rubert-base-cased-ru-go-emotions) - модель для распознавания эмоций в тексте
+[sentence-transfromers/paraphrase-multilingual-MiniLM-L12-v2](https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2) - энкодер для текста
 
 Вы можете поднять бота локально с помощью docker
 
 ```docker-compose up --build```
 
-Для этого вам понадобится .env файл с api-токенами от TelegramAPI, qdrant-client и huggingface
+Для этого вам понадобится .env файл с api-токенами от TelegramAPI, qdrant-client и replicate

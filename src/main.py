@@ -42,7 +42,10 @@ def photo(message):
         bot.send_message(message.chat.id, messages['model_answer'])
 
         markup = types.InlineKeyboardMarkup(row_width=5)
-        markup.add(*[types.InlineKeyboardButton(e, callback_data=str(i)) for i, e in enumerate(emoji)])
+        markup.add(*[
+            types.InlineKeyboardButton(e, callback_data=str(i)) 
+            for i, e in enumerate(emoji)
+        ])
 
         for entry in results:
             bot.send_message(

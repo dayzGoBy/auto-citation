@@ -9,5 +9,5 @@ services:
     volumes:
       - .:/bot
     command: python3 ./src/main.py
-    # restart: always
+    restart: always
   
