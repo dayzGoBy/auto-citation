@@ -53,6 +53,7 @@ def photo(message):
                 f"{entry['text']}\n\n - {entry['author']}, «{entry['piece']}»",
                 reply_markup=markup
             )
+        logger.info("Sent reply")
 
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -77,7 +78,7 @@ def save_quote_step(message):
 
 def save_author(message, quote):
     author = message.text
-    bot.send_message(message.from_user.id, "Откуда цитата:")
+    bot.send_message(message.from_user.id, "Название произведения:")
     bot.register_next_step_handler(message, save_work, quote, author)
 
 
@@ -89,18 +90,6 @@ def save_work(message, quote, author):
         bot.send_message(message.from_user.id, "При добавлении цитаты произошла ошибка, попробуйте ещё раз")
     else:
         bot.send_message(message.from_user.id, "Цитата успешно добавлена")
-
-
-# @bot.message_handler(commands=['view'])
-# def view_quotes(message):
-#     user_id = message.from_user.id
-#     user_quotes = get_user_quotes(user_id)
-#     if "quotes" in user_quotes and user_quotes["quotes"]:
-#         quotes_text = "\n\n".join(
-#             [f"\"{quote['quote']}\" - {quote['author']}, {quote['work']}" for quote in user_quotes["quotes"]])
-#         bot.send_message(user_id, f"Ваши цитаты:\n{quotes_text}")
-#     else:
-#         bot.send_message(user_id, "Вы ещё не добавили никаких цитат.")
 
 
 if __name__ == "__main__":

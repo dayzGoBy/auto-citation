@@ -19,7 +19,8 @@ def describe(path):
         input={
             "image": open(path, "rb"),
             "top_p": 1,
-            "prompt": "Provide me a prose piece, matching this image. Do not use words human, person, man or woman",
+            "prompt": """Provide me a prose piece, matching this image. Do not use words human, person, man or woman. 
+            Write it like you are a russian writer""",
             "max_tokens": 64,
             "temperature": 0.05
         }
